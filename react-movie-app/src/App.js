@@ -1,5 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import "./App.css";
+import Paginator from "./components/Paginator";
 
 function App() {
   const [movies, setMovies] = useState({});
@@ -37,11 +38,8 @@ function App() {
 
   const selectPages = (page) => {
     startSearch(searchValue, page);
+    console.log("selectPages");
   };
-
-  useEffect(() => {
-    startSearch();
-  }, [page]);
 
   return (
     <>
@@ -65,23 +63,33 @@ function App() {
       <div className="movies">
         {movies?.results && // movies varsa results'ına bak
           movies.results.map((movie) => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+            return (
+              <div className="movie-item" key={movie.id}>
+                {movie.poster_path ? (
+                  <figure className="movie-figure">
+                    <img
+                      src={`https://image.tmdb.org/t/p/w220_and_h330_face/${movie.poster_path}`}
+                      alt="{movie.title}"
+                    />
+                  </figure>
+                ) : (
+                  <img src="https://placehold.co/220x330" />
+                )}
+                <h3>{movie.title}</h3>
+                <p>{movie.overview}</p>
+              </div>
+            );
+          })}
+      </div>
+
+      {movies?.total_pages && (
+        <Paginator
+          total_pages={movies.total_pages}
+          page={movies.page}
+          selectPages={selectPages}
+        />
+      )}
+    </>
   );
 }
 
